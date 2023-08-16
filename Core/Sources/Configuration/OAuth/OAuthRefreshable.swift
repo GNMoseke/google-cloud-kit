@@ -23,7 +23,7 @@ extension OAuthRefreshable {
         // Check if the token is about to expire within the next 15 seconds.
         // This gives us a buffer and avoids being too close to the expiration when making requests.
         let expiration = created.addingTimeInterval(TimeInterval(token.expiresIn - 15))
-
+        print("Checking freshness: \(expiration > now)")
         return expiration > now
     }
 }

@@ -32,6 +32,7 @@ public class OAuthServiceAccount: OAuthRefreshable {
     // Google Documentation for this approach: https://developers.google.com/identity/protocols/OAuth2ServiceAccount
     public func refresh() -> EventLoopFuture<OAuthAccessToken> {
         do {
+            print("refreshing JWT")
             let headers: HTTPHeaders = ["Content-Type": "application/x-www-form-urlencoded"]
             let token = try generateJWT()
             let body: HTTPClient.Body = .string("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=\(token)"
@@ -59,12 +60,17 @@ public class OAuthServiceAccount: OAuthRefreshable {
     }
 
     private func generateJWT() throws -> String {
+        print("generating OAuth JWT")
         let payload = OAuthPayload(iss: IssuerClaim(value: credentials.clientEmail),
                                    scope: scope,
                                    aud: AudienceClaim(value: GoogleOAuthTokenAudience),
                                    exp: ExpirationClaim(value: Date().addingTimeInterval(3600)),
                                    iat: IssuedAtClaim(value: Date()), sub: subscription)
         let privateKey = try RSAKey.private(pem: credentials.privateKey)
-        return try JWTSigner.rs256(key: privateKey).sign(payload)
+        print("Private key generated from:\n \(credentials.privateKey)")
+        print("PK: \(privateKey)")
+        let signed = try JWTSigner.rs256(key: privateKey).sign(payload)
+        print("Signed payload:\n \(signed)")
+        return signed
     }
 }

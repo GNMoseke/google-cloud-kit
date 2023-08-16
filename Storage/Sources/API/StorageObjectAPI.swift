@@ -410,6 +410,8 @@ public final class GoogleCloudStorageObjectAPI: StorageObjectAPI {
         } else {
             queryParams = "uploadType=media&name=\(name)"
         }
+
+        print("creating upload request for \(name)")
         
         var headers: HTTPHeaders = ["Content-Type": contentType]
         
