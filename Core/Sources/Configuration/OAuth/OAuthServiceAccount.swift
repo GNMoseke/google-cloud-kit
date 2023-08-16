@@ -64,7 +64,7 @@ public class OAuthServiceAccount: OAuthRefreshable {
                                    aud: AudienceClaim(value: GoogleOAuthTokenAudience),
                                    exp: ExpirationClaim(value: Date().addingTimeInterval(3600)),
                                    iat: IssuedAtClaim(value: Date()), sub: subscription)
-        let privateKey = try RSAKey.private(pem: credentials.privateKey.data(using: .utf8, allowLossyConversion: true) ?? Data())
+        let privateKey = try RSAKey.private(pem: credentials.privateKey)
         return try JWTSigner.rs256(key: privateKey).sign(payload)
     }
 }
